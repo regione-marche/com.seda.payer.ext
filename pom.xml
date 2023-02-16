@@ -8,10 +8,11 @@
 	<name>com.seda.payer.ext</name>
 	<description>com.seda.payer.ext</description>
 	
-	 <parent>
+   <parent>
       <groupId>it.maggioli.informatica.base.pom</groupId>
       <artifactId>pagonet-base</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
+      <relativePath/>
    </parent>
 
 	
