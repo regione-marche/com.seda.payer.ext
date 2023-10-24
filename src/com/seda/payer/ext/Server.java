@@ -1,7 +1,7 @@
 package com.seda.payer.ext;
 
-import org.apache.log4j.Logger;
-
+import com.seda.commons.logger.CustomLoggerManager;
+import com.seda.commons.logger.LoggerWrapper;
 import com.seda.payer.ext.util.Messages;
 import com.seda.payer.ext.util.SedaExtException;
 //import com.seda.payer.ext.util.SedaExtLogger;
@@ -13,7 +13,7 @@ public class Server {
 	private String _encryptKey;
 	private String _codicePortale;
 	
-	private static Logger _logger = null;	
+	private static final LoggerWrapper _logger =  CustomLoggerManager.get(Server.class);
 	
 	/**
 	 * Costruttore dell'oggetto Server con logger di default
@@ -24,25 +24,6 @@ public class Server {
 	 */
 	public Server(String encryptIV, String encryptKey, String codicePortale) throws SedaExtException
 	{
-//		_logger = SedaExtLogger.getLogger("com.seda.payer.ext.Server");
-		_logger = Logger.getLogger("com.seda.payer.ext.Server");
-		initClass(encryptIV, encryptKey, codicePortale);
-	}
-	
-	/**
-	 * Costruttore dell'oggetto Server con logger custom
-	 * @param encryptIV Chiave primaria per la generazione dell'Hash
-	 * @param encryptKey Chiave secondaria per la generazione dell'Hash
-	 * @param codicePortale Codice identificativo del portale esterno da utilizzare nei buffer di scambio
-	 * @param logger Istanza esterna di un oggetto log4j per il logging delle informazioni
-	 * @throws SedaExtException
-	 */
-	public Server(String encryptIV, String encryptKey, String codicePortale, Logger logger) throws SedaExtException
-	{
-		if (logger == null)
-			throw new SedaExtException(Messages.INVALID_PARAMETER_VALUE.format("logger"));
-		
-		_logger = logger;
 		initClass(encryptIV, encryptKey, codicePortale);
 	}
 	
@@ -66,7 +47,7 @@ public class Server {
 	}
 	
 	/**
-	 * Effettua i controlli di validà dei dati ricevuti ed estrae l'xml del &lt;PaymentRequest&gt; dal &lt;Buffer&gt;
+	 * Effettua i controlli di validï¿½ dei dati ricevuti ed estrae l'xml del &lt;PaymentRequest&gt; dal &lt;Buffer&gt;
 	 * @param buffer Stringa xml del &lt;Buffer&gt; ricevuto
 	 * @param window_minutes Finestra tenporale entro la quale ritenere valido il messaggio ricevuto
 	 * @return Stringa xml del &lt;PaymentRequest&gt;
@@ -80,7 +61,7 @@ public class Server {
 		if (buffer == null || buffer.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("buffer"));
 		
-		String bufferDatiPaymentRequest = coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey, _logger);
+		String bufferDatiPaymentRequest = coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey);
 		
 		//verifica dei dati ricevuti
 		String sError = coreCS.checkPaymentRequestData(bufferDatiPaymentRequest);
@@ -92,7 +73,7 @@ public class Server {
 	}
 
 	/**
-	 * Effettua i controlli di validà dei dati ricevuti ed estrae il Request ID dal &lt;Buffer&gt;
+	 * Effettua i controlli di validï¿½ dei dati ricevuti ed estrae il Request ID dal &lt;Buffer&gt;
 	 * @param buffer Stringa xml del &lt;Buffer&gt; ricevuto
 	 * @param window_minutes Finestra tenporale entro la quale ritenere valido il messaggio ricevuto
 	 * @return Request ID
@@ -106,11 +87,11 @@ public class Server {
 		if (buffer == null || buffer.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("buffer"));
 		
-		return coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey, _logger);
+		return coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey);
 	}
 	
 	/**
-	 * Effettua i controlli di validà dei dati ricevuti ed estrae il Payment ID dal &lt;Buffer&gt;
+	 * Effettua i controlli di validï¿½ dei dati ricevuti ed estrae il Payment ID dal &lt;Buffer&gt;
 	 * @param buffer Stringa xml del &lt;Buffer&gt; ricevuto
 	 * @param window_minutes Finestra tenporale entro la quale ritenere valido il messaggio ricevuto
 	 * @return Payment ID
@@ -124,12 +105,12 @@ public class Server {
 		if (buffer == null || buffer.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("buffer"));
 		
-		return coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey, _logger);
+		return coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey);
 	}
 	
 	/**
 	 * Costruisce l'xml del &lt;Buffer&gt; da utilizzare per gli scambi S2S e redirect con il Client
-	 * @param bufferDati Stringa xml del &lt;PaymentData&gt; che verrà codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
+	 * @param bufferDati Stringa xml del &lt;PaymentData&gt; che verrï¿½ codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
 	 * @return Stringa xml del &lt;Buffer&gt; costruito
 	 * @throws SedaExtException
 	 */
@@ -141,6 +122,6 @@ public class Server {
 		if (bufferDati == null || bufferDati.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("bufferDati"));
 		
-		return coreCS.creaBuffer(bufferDati, _encryptIV, _encryptKey, _codicePortale, _logger);
+		return coreCS.creaBuffer(bufferDati, _encryptIV, _encryptKey, _codicePortale);
 	}
 }
