@@ -1,8 +1,7 @@
 package com.seda.payer.ext;
 
-import org.apache.log4j.Logger;
-
-
+import com.seda.commons.logger.CustomLoggerManager;
+import com.seda.commons.logger.LoggerWrapper;
 import com.seda.payer.ext.util.Messages;
 import com.seda.payer.ext.util.SedaExtException;
 //import com.seda.payer.ext.util.SedaExtLogger;
@@ -14,7 +13,7 @@ public class Client {
 	private String _encryptKey;
 	private String _codicePortale;
 
-	private static Logger _logger = null;	
+	private static final LoggerWrapper _logger =  CustomLoggerManager.get(Client.class);
 	
 	/**
 	 * Costruttore dell'oggetto Client con logger di default
@@ -26,27 +25,9 @@ public class Client {
 	public Client(String encryptIV, String encryptKey, String codicePortale) throws SedaExtException
 	{
 //		_logger = SedaExtLogger.getLogger("FILE");
-		_logger = Logger.getLogger("FILE");
 		initClass(encryptIV, encryptKey, codicePortale);
 	}
-	
-	/**
-	 * Costruttore dell'oggetto Client con logger custom
-	 * @param encryptIV Chiave primaria per la generazione dell'Hash
-	 * @param encryptKey Chiave secondaria per la generazione dell'Hash
-	 * @param codicePortale Codice identificativo del portale esterno da utilizzare nei buffer di scambio
-	 * @param logger Istanza esterna di un oggetto log4j per il logging delle informazioni
-	 * @throws SedaExtException
-	 */
-	public Client(String encryptIV, String encryptKey, String codicePortale, Logger logger) throws SedaExtException
-	{
-		if (logger == null)
-			throw new SedaExtException(Messages.INVALID_PARAMETER_VALUE.format("logger"));
 		
-		_logger = logger;
-		initClass(encryptIV, encryptKey, codicePortale);
-	}
-	
 	private void initClass(String encryptIV, String encryptKey, String codicePortale) throws SedaExtException
 	{
 		//controllo parametri input
@@ -68,7 +49,7 @@ public class Client {
 	
 	/**
 	 * Costruisce l'xml del &lt;Buffer&gt; da utilizzare per lo scambio S2S con il Server
-	 * @param bufferDati Stringa xml del &lt;PaymentRequest&gt; che verrà codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
+	 * @param bufferDati Stringa xml del &lt;PaymentRequest&gt; che verrï¿½ codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
 	 * @return Stringa xml del &lt;Buffer&gt; costruito
 	 * @throws SedaExtException
 	 */
@@ -80,13 +61,13 @@ public class Client {
 		if (bufferDati == null || bufferDati.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("bufferDati"));
 		
-		return coreCS.creaBuffer(bufferDati, _encryptIV, _encryptKey, _codicePortale, _logger);
+		return coreCS.creaBuffer(bufferDati, _encryptIV, _encryptKey, _codicePortale);
 	}
 
 	
 	/**
 	 * Costruisce l'xml del &lt;Buffer&gt; da utilizzare per il redirect al Server
-	 * @param rID Request ID che verrà codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
+	 * @param rID Request ID che verrï¿½ codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
 	 * @return Stringa xml del &lt;Buffer&gt; costruito
 	 * @throws SedaExtException
 	 */
@@ -98,12 +79,12 @@ public class Client {
 		if (rID == null || rID.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("rID"));
 		
-		return coreCS.creaBuffer(rID, _encryptIV, _encryptKey, _codicePortale, _logger);
+		return coreCS.creaBuffer(rID, _encryptIV, _encryptKey, _codicePortale);
 	}
 	
 	/**
 	 * Costruisce l'xml del &lt;Buffer&gt; da utilizzare per lo scambio S2S con il Server
-	 * @param pID Payment ID che verrà codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
+	 * @param pID Payment ID che verrï¿½ codificato e innestato all'interno del tag &lt;BufferDati&gt; del buffer finale
 	 * @return Stringa xml del &lt;Buffer&gt; costruito
 	 * @throws SedaExtException
 	 */
@@ -115,11 +96,11 @@ public class Client {
 		if (pID == null || pID.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("pID"));
 		
-		return coreCS.creaBuffer(pID, _encryptIV, _encryptKey, _codicePortale, _logger);
+		return coreCS.creaBuffer(pID, _encryptIV, _encryptKey, _codicePortale);
 	}
 	
 	/**
-	 * Effettua i controlli di validà dei dati ricevuti ed estrae l'xml del &lt;PaymentData&gt; dal &lt;Buffer&gt;
+	 * Effettua i controlli di validï¿½ dei dati ricevuti ed estrae l'xml del &lt;PaymentData&gt; dal &lt;Buffer&gt;
 	 * @param buffer Stringa xml del &lt;Buffer&gt; ricevuto
 	 * @param window_minutes Finestra tenporale entro la quale ritenere valido il messaggio ricevuto
 	 * @return Stringa xml del &lt;PaymentData&gt;
@@ -133,6 +114,6 @@ public class Client {
 		if (buffer == null || buffer.equals(""))
 			throw new SedaExtException(Messages.EMPTY_PARAMETER.format("buffer"));
 		
-		return coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey, _logger);
+		return coreCS.decodeBuffer(buffer, window_minutes, _encryptIV, _encryptKey);
 	}
 }

@@ -11,11 +11,12 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.seda.commons.logger.CustomLoggerManager;
+import com.seda.commons.logger.LoggerWrapper;
 import com.seda.payer.ext.util.Messages;
 import com.seda.payer.ext.util.SedaExtException;
 import com.seda.payer.ext.util.Utilities;
@@ -23,9 +24,10 @@ import com.seda.payer.ext.util.Utilities;
 
 public class CoreCS {
 
+	private static final LoggerWrapper logger =  CustomLoggerManager.get(CoreCS.class);
+
 	
-	
-	protected String creaBuffer(String bufferDati, String encryptIV, String encryptKey, String codicePortale, Logger logger) throws SedaExtException
+	protected String creaBuffer(String bufferDati, String encryptIV, String encryptKey, String codicePortale) throws SedaExtException
 	{
 		String buffer = null;
 		
@@ -62,7 +64,7 @@ public class CoreCS {
         return buffer;
 	}
 	
-	protected String decodeBuffer(String buffer, int window_minutes, String encryptIV, String encryptKey, Logger logger) throws SedaExtException
+	protected String decodeBuffer(String buffer, int window_minutes, String encryptIV, String encryptKey) throws SedaExtException
 	{
 		try
 		{
@@ -217,7 +219,7 @@ public class CoreCS {
 	        checkNodeValueMaxLenght("ServiceData/TipoUfficio", Utilities.getElementValue("/PaymentRequest/ServiceData/TipoUfficio", doc), 1, listErrors);
 	        checkNodeValueMaxLenght("ServiceData/CodiceUfficio", Utilities.getElementValue("/PaymentRequest/ServiceData/CodiceUfficio", doc), 6, listErrors);
 	        checkNodeNotEmpty("ServiceData/TipologiaServizio", Utilities.getElementValue("/PaymentRequest/ServiceData/TipologiaServizio", doc), listErrors);
-	        // segnalazione Lepida del 04/06/2013, possibilità di tipologia servizio più lunga di 3 bytes seguendo la linea di CUP. Portata a 6 caratteri
+	        // segnalazione Lepida del 04/06/2013, possibilitï¿½ di tipologia servizio piï¿½ lunga di 3 bytes seguendo la linea di CUP. Portata a 6 caratteri
 	        //checkNodeValueMaxLenght("ServiceData/TipologiaServizio", Utilities.getElementValue("/PaymentRequest/ServiceData/TipologiaServizio", doc), 3, listErrors);
 	        checkNodeValueMaxLenght("ServiceData/TipologiaServizio", Utilities.getElementValue("/PaymentRequest/ServiceData/TipologiaServizio", doc), 6, listErrors);
 			
